@@ -1,0 +1,55 @@
+[package]
+name    = "proxy"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "proxy"
+path = "src/main.rs"
+
+[dependencies]
+# 비동기 런타임
+tokio = { version = "1", features = ["full"] }
+
+# HTTP 처리
+hyper        = { version = "1", features = ["full"] }
+hyper-util   = { version = "0.1", features = ["full"] }
+http-body-util = "0.1"
+bytes        = "1"
+
+# TLS
+rustls              = { version = "0.23", features = ["ring"] }
+tokio-rustls        = "0.26"
+rustls-pemfile      = "2"
+
+# Lua 바인딩
+mlua = { version = "0.10", features = ["lua54", "vendored", "async"] }
+
+# 설정 파일
+serde       = { version = "1", features = ["derive"] }
+toml        = "0.8"
+
+# 파일 감시
+notify = "6"
+
+# 메트릭
+prometheus = "0.13"
+
+# 유틸리티
+anyhow      = "1"
+tracing     = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tokio-util  = { version = "0.7", features = ["io"] }
+arc-swap    = "1"
+dashmap     = "5"
+async-trait = "0.1"
+base64      = "0.21"
+hmac        = "0.12"
+sha2        = "0.10"
+chrono      = { version = "0.4", features = ["serde"] }
+uuid        = { version = "1", features = ["v4"] }
+ipnet       = "2"
+
+[profile.release]
+opt-level = 3
+lto       = true

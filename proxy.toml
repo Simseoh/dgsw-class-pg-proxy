@@ -1,0 +1,43 @@
+# ──────────────────────────────────────────────────────────────────────
+# Rust + Lua Custom Proxy — 설정 파일
+# ──────────────────────────────────────────────────────────────────────
+
+[listener]
+addr = "0.0.0.0:8443"          # TLS 리스너 주소
+http_addr = "0.0.0.0:8080"     # HTTP (비-TLS) 리스너 주소
+workers = 4                     # tokio worker threads (0 = CPU 코어 수)
+
+[tls]
+cert = "certs/server.crt"
+key  = "certs/server.key"
+
+[admin]
+addr = "127.0.0.1:9000"        # Admin API 주소 (로컬 전용)
+
+[plugins]
+dir = "plugins"
+# 실행 순서가 보안에 직접 영향 — 변경 시 주의
+pipeline = [
+    "ip_filter.lua",
+    "rate_limit.lua",
+    "auth.lua",
+    "authz.lua",
+    "transform.lua",
+]
+
+[[upstream]]
+name    = "default"
+targets = [
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+]
+lb         = "round_robin"      # round_robin | least_conn | consistent_hash
+health_check_path     = "/health"
+health_check_interval = 5       # seconds
+
+[[upstream]]
+name    = "api_v2"
+targets = ["http://127.0.0.1:4000"]
+lb      = "least_conn"
+health_check_path     = "/health"
+health_check_interval = 10
